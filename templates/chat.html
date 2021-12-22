@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <script>
+    function sendMessage() {
+      let name = $('#name').val();
+      let text = $('#text').val();
+      $.get('/send', { 'name': name, 'text': text });
+    }
+
+    function loadData() {
+      $.get('/get_messages', (data) => {
+        $('#messages').empty();
+        let messages = data['messages'];
+        for (let i in messages) {
+          let name = messages[i]['name'];
+          let text = messages[i]['text'];
+          let time = messages[i]['time'];
+          let html =
+            '<div> [<b>' +
+            name +
+            '</b>]: ' +
+            text +
+            '<i>' +
+            time +
+            '</i></div>';
+          $('#messages').append($(html));
+        }
+      });
+    }
+
+    $(() => {
+      $('#sendButton').on('click', (event) => {
+        sendMessage();
+        $('#text').val('');
+      });
+      setInterval(loadData, 1000);
+    });
+  </script>
+  <body>
+    <div id="messages"></div>
+    <b>Ваше имя</b>
+    <input id="name" type="text" placeholder="Введите ваше имя" />
+    <input id="text" type="text" placeholder="..." />
+    <button id="sendButton">Отправить</button>
+  </body>
+</html>
