@@ -1,19 +1,29 @@
 from flask import Flask, request, render_template
 import time
 from datetime import datetime
+import json
 
 app = Flask(__name__)
 
-def time_format(t):
-  return datetime.fromtimestamp(t)
+messages_file = './data/messages.json'
+json_file = open(messages_file, 'rb')
+data = json.load(json_file)
 
-all_messages = [
-  {
-    'text': 'test message',
-    'name': 'username',
-    'time': time_format(time.time() - 3600)
+if not 'all_messages' in data:
+  print(f'Can not find all_messages in {messages_file}')
+  exit(1)
+  
+all_messages = data['all_messages']
+
+def save_messages():
+  data = {
+    'all_messages': all_messages
   }
-]
+  json_file = open(messages_file, 'w')
+  json.dump(data, json_file)
+
+def time_format(t):
+  return str(datetime.fromtimestamp(t))
 
 @app.route('/')
 def root():
@@ -25,7 +35,7 @@ def chat():
 
 @app.route('/get_messages')
 def get_messages():
-  return {'messages': all_messages}
+  return {'all_messages': all_messages}
 
 @app.route('/send')
 def send_message():
@@ -45,6 +55,7 @@ def send_message():
   }
 
   all_messages.append(message)
+  save_messages()
 
   return 'OK'
 

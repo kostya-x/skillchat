@@ -21,7 +21,7 @@
     function loadData() {
       $.get('/get_messages', (data) => {
         $('#messages').empty();
-        let messages = data['messages'];
+        let messages = data['all_messages'];
         for (let i in messages) {
           let name = messages[i]['name'];
           let text = messages[i]['text'];
