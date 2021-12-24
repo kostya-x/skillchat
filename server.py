@@ -19,8 +19,8 @@ def save_messages():
   data = {
     'all_messages': all_messages
   }
-  json_file = open(messages_file, 'w')
-  json.dump(data, json_file)
+  json_file = open(messages_file, 'w', encoding='utf-8')
+  json.dump(data, json_file, ensure_ascii=False)
 
 def time_format(t):
   return str(datetime.fromtimestamp(t))
